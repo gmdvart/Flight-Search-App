@@ -17,7 +17,7 @@ class HomeViewModel(private val flightRepository: FlightRepository) : ViewModel(
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            HomeUiState(favorites = listOf())
+            HomeUiState()
         )
 
     suspend fun removeFavorite(favorite: Favorite) = flightRepository.deleteFavorite(favorite)
