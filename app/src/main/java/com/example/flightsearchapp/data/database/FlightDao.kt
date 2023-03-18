@@ -17,7 +17,7 @@ interface FlightDao {
     @Query("SELECT * FROM favorite")
     fun getAllFavorites(): Flow<List<Favorite>>
 
-    @Query("SELECT * FROM airport WHERE iata_code LIKE :searchString OR name LIKE :searchString")
+    @Query("SELECT * FROM airport WHERE iata_code LIKE :searchString || '%' OR name LIKE :searchString || '%'")
     fun getAirportByIataOrName(searchString: String): Flow<List<Airport>>
 
     @Query("SELECT * FROM airport WHERE id = :id")

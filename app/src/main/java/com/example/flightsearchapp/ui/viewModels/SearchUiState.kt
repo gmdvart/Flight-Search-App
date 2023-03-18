@@ -12,7 +12,10 @@ data class SearchUiState(
 
 fun SearchUiState.isSearchStringEmpty(): Boolean = searchText.isEmpty()
 
+fun SearchUiState.isResultsNotFound(): Boolean = searchText.isNotEmpty() && results.isEmpty()
+
 fun SearchUiState.flightToFavorite(index: Int): Favorite = Favorite(
+    id = (selectedResults[index].first.id.toString() + selectedResults[index].second.id.toString()).toInt(),
     departureCode = selectedResults[index].first.iataCode,
     destinationCode = selectedResults[index].second.iataCode
 )

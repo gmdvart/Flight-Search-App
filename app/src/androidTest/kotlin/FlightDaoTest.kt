@@ -22,14 +22,14 @@ class FlightDaoTest {
     lateinit var flightDatabase: FlightDatabase
 
     private val firstFavorite = Favorite(
-        0,
-        "GRL",
-        "BLD"
+        id = 0,
+        departureCode = "GRL",
+        destinationCode = "BLD"
     )
     private val secondeFavorite = Favorite(
-        1,
-        "ART",
-        "TRA"
+        id = 1,
+        departureCode = "ART",
+        destinationCode = "TRA"
     )
 
     @Before
@@ -71,9 +71,9 @@ class FlightDaoTest {
         assertTrue(favorites.isEmpty())
     }
 
-    suspend fun addOneFavorite() = flightDao.insertFavorite(firstFavorite)
+    private suspend fun addOneFavorite() = flightDao.insertFavorite(firstFavorite)
 
-    suspend fun addTwoFavorites() {
+    private suspend fun addTwoFavorites() {
         flightDao.insertFavorite(firstFavorite)
         flightDao.insertFavorite(secondeFavorite)
     }
