@@ -12,6 +12,8 @@ interface FlightRepository {
 
     fun getAllFavorites(): Flow<List<Favorite>>
 
+    fun getAllAirports(): Flow<List<Airport>>
+
     fun getAirportByIataOrName(searchString: String): Flow<List<Airport>>
 
     fun getAirportById(id: Int): Flow<Airport>
@@ -23,6 +25,8 @@ class OfflineFlightRepository(private val flightDao: FlightDao) : FlightReposito
     override suspend fun deleteFavorite(favorite: Favorite) = flightDao.deleteFavorite(favorite)
 
     override fun getAllFavorites(): Flow<List<Favorite>> = flightDao.getAllFavorites()
+
+    override fun getAllAirports(): Flow<List<Airport>> = flightDao.getAllAirports()
 
     override fun getAirportByIataOrName(searchString: String): Flow<List<Airport>> = flightDao.getAirportByIataOrName(searchString)
 
