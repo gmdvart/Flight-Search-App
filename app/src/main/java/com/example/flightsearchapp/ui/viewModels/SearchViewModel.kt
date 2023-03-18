@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.flightsearchapp.data.database.Airport
 import com.example.flightsearchapp.data.repository.FlightRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -32,5 +33,8 @@ class SearchViewModel(
         } else {
             searchUiState = searchUiState.copy(results = listOf())
         }
+    }
+
+    fun selectAirport(airport: Airport) = viewModelScope.launch {
     }
 }
