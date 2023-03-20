@@ -12,8 +12,9 @@ data class SearchUiState(
 
 fun SearchUiState.isSearchStringEmpty(): Boolean = searchText.isEmpty()
 
+fun SearchUiState.isResultsNotFound(): Boolean = searchText.isEmpty() || searchText.isNotEmpty() && results.isEmpty()
 
-fun SearchUiState.isResultsNotFound(): Boolean = searchText.isNotEmpty() && results.isEmpty()
+fun SearchUiState.isResultSelected(): Boolean = resultsBySelected.isNotEmpty()
 
 fun SearchUiState.flightToFavorite(index: Int): Favorite = Favorite(
     id = (resultsBySelected[index].first.id.toString() + resultsBySelected[index].second.id.toString()).toInt(),

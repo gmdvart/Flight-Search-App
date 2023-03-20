@@ -11,10 +11,9 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.flightsearchapp.data.database.Airport
 import com.example.flightsearchapp.ui.theme.FlightSearchAppTheme
-import com.example.flightsearchapp.ui.viewModels.SearchUiState
-import com.example.flightsearchapp.ui.viewModels.SearchViewModel
-import com.example.flightsearchapp.ui.viewModels.ViewModelFactoryProvider
+import com.example.flightsearchapp.ui.viewModels.*
 
 @Composable
 fun FlightHomeScreen(
@@ -32,7 +31,13 @@ fun FlightHomeScreen(
             searchUiState = searchViewModel.searchUiState,
             onValueChange = searchViewModel::performSearch
         )
-        ResultScreen(searchUiState = searchViewModel.searchUiState)
+        ResultScreen(
+            searchViewModel = searchViewModel,
+            onAirportResultClick = {
+                searchViewModel.selectAirport(it)
+                focusManager.clearFocus()
+            }
+        )
     }
 
     BackHandler(
@@ -44,26 +49,31 @@ fun FlightHomeScreen(
 }
 
 @Composable
-fun ResultScreen(searchUiState: SearchUiState) {
-    if (searchUiState.results.isNotEmpty()) FlightVerticalColumn(modifier = Modifier.padding(4.dp), airports = searchUiState.results)
-    else ResultsNotFinded(modifier = Modifier.padding(4.dp))
-}
-
-@Composable
-fun ResultsDisplay(
-    modifier: Modifier = Modifier,
-    searchUiState: SearchUiState
+fun ResultScreen(
+    searchViewModel: SearchViewModel,
+    onAirportResultClick: (Airport) -> Unit
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
-        Text(
-            text = "Results found: ${searchUiState.results.size}",
-            modifier = Modifier.align(Alignment.Center)
+    val searchUiState = searchViewModel.searchUiState
+
+    if (searchUiState.isResultSelected()) {
+      FlightVerticalPairColumn(
+          modifier = Modifier.padding(4.dp),
+          airportPairs = searchUiState.resultsBySelected,
+          onItemClick = { }
+      )
+    } else if (!searchUiState.isResultsNotFound()) {
+        FlightVerticalColumn(
+            modifier = Modifier.padding(4.dp),
+            airports = searchUiState.results,
+            onItemClick = onAirportResultClick
         )
+    } else {
+        ResultsNotFound(modifier = Modifier.padding(4.dp))
     }
 }
 
 @Composable
-fun ResultsNotFinded(modifier: Modifier = Modifier) {
+fun ResultsNotFound(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize()) {
         Text(
             text = "Find nothing.",

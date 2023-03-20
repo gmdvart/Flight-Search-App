@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.flightsearchapp.data.database.Airport
 import com.example.flightsearchapp.data.repository.FlightRepository
+import com.example.flightsearchapp.utlis.generatePairsToElement
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -22,7 +24,7 @@ class SearchViewModel(
         private set
 
     fun performSearch(searchText: String) {
-        searchUiState = searchUiState.copy(searchText = searchText)
+        searchUiState = searchUiState.copy(searchText = searchText, resultsBySelected = listOf())
 
         if (!searchUiState.isSearchStringEmpty()) {
             // Performing search
@@ -36,5 +38,9 @@ class SearchViewModel(
     }
 
     fun selectAirport(airport: Airport) = viewModelScope.launch {
+        val allAirports = flightRepository.getAllAirports().first()
+        val pairs = async { allAirports.generatePairsToElement(airport) }
+
+        searchUiState = searchUiState.copy(resultsBySelected = pairs.await())
     }
 }
