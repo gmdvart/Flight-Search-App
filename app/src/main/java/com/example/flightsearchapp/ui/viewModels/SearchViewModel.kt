@@ -1,16 +1,16 @@
 package com.example.flightsearchapp.ui.viewModels
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.flightsearchapp.data.database.Airport
+import com.example.flightsearchapp.data.database.Favorite
 import com.example.flightsearchapp.data.repository.FlightRepository
 import com.example.flightsearchapp.utlis.generatePairsToElement
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -37,10 +37,39 @@ class SearchViewModel(
         }
     }
 
+    fun updateSearchUiState(newSearchUiState: SearchUiState) {
+        searchUiState = newSearchUiState
+    }
+
     fun selectAirport(airport: Airport) = viewModelScope.launch {
         val allAirports = flightRepository.getAllAirports().first()
         val pairs = async { allAirports.generatePairsToElement(airport) }
 
         searchUiState = searchUiState.copy(resultsBySelected = pairs.await())
+    }
+
+    suspend fun addPairToFavorite(pair: Pair<Airport, Airport>) {
+        val favorite = flightToFavorite(pair)
+        flightRepository.insertFavorite(
+            favorite = favorite
+        )
+    }
+
+    suspend fun removeFavorite(favorite: Favorite) {
+        flightRepository.deleteFavorite(favorite = favorite)
+    }
+
+    fun refreshFavorites() {
+        viewModelScope.launch {
+            searchUiState = searchUiState.copy(
+                favorites = flightRepository.getAllFavorites()
+                    .filterNotNull()
+                    .first()
+            )
+        }
+    }
+
+    init {
+        refreshFavorites()
     }
 }

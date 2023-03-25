@@ -2,12 +2,18 @@ package com.example.flightsearchapp.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
-import androidx.compose.material3.Divider
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.flightsearchapp.R
 import com.example.flightsearchapp.data.database.Airport
 import com.example.flightsearchapp.ui.theme.FlightSearchAppTheme
 
@@ -15,13 +21,13 @@ import com.example.flightsearchapp.ui.theme.FlightSearchAppTheme
 fun FlightAirportItem(
     modifier: Modifier = Modifier,
     airport: Airport,
-    enabled: Boolean = true,
+    isClickEnabled: Boolean = true,
     onClick: (Airport) -> Unit = {}
 ) {
     Row(modifier = modifier
         .padding(4.dp)
+        .clickable(enabled = isClickEnabled) { onClick(airport) }
         .fillMaxWidth()
-        .clickable(enabled = enabled) { onClick(airport) }
     ) {
         Text(text = airport.iataCode)
         Spacer(modifier = modifier.weight(1f))
@@ -33,21 +39,26 @@ fun FlightAirportItem(
 fun FlightAirportPairItem(
     modifier: Modifier = Modifier,
     pair: Pair<Airport, Airport>,
-    enabled: Boolean = true,
-    onClick: () -> Unit = {}
+    onClick: (Pair<Airport, Airport>) -> Unit = {},
+    favoriteIndicatorColor: Color = Color.Gray
 ) {
-    Column(modifier = modifier
-        .clickable(enabled = enabled) { onClick() }
-        .padding(4.dp)
-    ) {
-        Column {
-            Text(text = "Depart")
-            FlightAirportItem(airport = pair.first, enabled = false)
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = stringResource(id = R.string.flight_depart))
+            FlightAirportItem(airport = pair.first, isClickEnabled = false)
+            Text(text = stringResource(id = R.string.flight_arrive))
+            FlightAirportItem(airport = pair.second, isClickEnabled = false)
         }
-        Column {
-            Text(text = "Arrive")
-            FlightAirportItem(airport = pair.second, enabled = false)
-        }
+        IconButton(
+            onClick = { onClick(pair) },
+            content = {
+                Icon(
+                    imageVector = Icons.Outlined.Favorite,
+                    contentDescription = stringResource(id = R.string.favorite),
+                    tint = favoriteIndicatorColor
+                )
+            }
+        )
     }
 }
 
@@ -55,7 +66,7 @@ fun FlightAirportPairItem(
 @Composable
 fun FlightAirportItemPreview() {
     FlightSearchAppTheme {
-        FlightAirportItem(airport = Airport(0, "LOL", "Lead of Laugh", 999))
+        FlightAirportItem(airport = Airport(0, "LOL", "Lead of Laugh", 999), isClickEnabled = false)
     }
 }
 

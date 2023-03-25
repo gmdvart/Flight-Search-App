@@ -32,11 +32,14 @@ fun FlightVerticalColumn(
 fun FlightVerticalPairColumn(
     modifier: Modifier = Modifier,
     airportPairs: List<Pair<Airport, Airport>>,
-    onItemClick: (Airport) -> Unit
+    onItemClick: (Pair<Airport, Airport>) -> Unit
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
-        items(items = airportPairs) {
-            FlightAirportPairItem(pair = it)
+        items(items = airportPairs) { airportPair ->
+            FlightAirportPairItem(
+                pair = airportPair,
+                onClick = { onItemClick(it) }
+            )
             Divider(modifier = Modifier.padding(4.dp).fillMaxWidth())
         }
     }
