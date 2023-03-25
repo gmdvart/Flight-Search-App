@@ -29,7 +29,7 @@ class SearchViewModel(
         if (!searchUiState.isSearchStringEmpty()) {
             // Performing search
             viewModelScope.launch {
-                val results = flightRepository.getAirportByIataOrName(searchText).first()
+                val results = flightRepository.getAirportsByIataOrName(searchText).first()
                 searchUiState = searchUiState.copy(results = results)
             }
         } else {

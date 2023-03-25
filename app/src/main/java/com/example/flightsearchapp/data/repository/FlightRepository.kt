@@ -14,9 +14,11 @@ interface FlightRepository {
 
     fun getAllAirports(): Flow<List<Airport>>
 
-    fun getAirportByIataOrName(searchString: String): Flow<List<Airport>>
+    fun getAirportsByIataOrName(searchString: String): Flow<List<Airport>>
 
     fun getAirportById(id: Int): Flow<Airport>
+
+    fun getAirportById(iataCode: String): Flow<Airport>
 }
 
 class OfflineFlightRepository(private val flightDao: FlightDao) : FlightRepository {
@@ -28,7 +30,9 @@ class OfflineFlightRepository(private val flightDao: FlightDao) : FlightReposito
 
     override fun getAllAirports(): Flow<List<Airport>> = flightDao.getAllAirports()
 
-    override fun getAirportByIataOrName(searchString: String): Flow<List<Airport>> = flightDao.getAirportByIataOrName(searchString)
+    override fun getAirportsByIataOrName(searchString: String): Flow<List<Airport>> = flightDao.getAirportsByIataOrName(searchString)
 
     override fun getAirportById(id: Int): Flow<Airport> = flightDao.getAirportById(id)
+
+    override fun getAirportById(iataCode: String): Flow<Airport> = flightDao.getAirportByIata(iataCode)
 }

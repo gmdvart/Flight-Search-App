@@ -2,6 +2,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.flightsearchapp.data.database.Airport
 import com.example.flightsearchapp.data.database.Favorite
 import com.example.flightsearchapp.data.database.FlightDao
 import com.example.flightsearchapp.data.database.FlightDatabase
@@ -21,12 +22,19 @@ class FlightDaoTest {
     lateinit var flightDao: FlightDao
     lateinit var flightDatabase: FlightDatabase
 
+    private val testAirport = Airport(
+        id = 0,
+        name = "Airport of Some City",
+        iataCode = "ASC",
+        passengers = 101
+    )
+
     private val firstFavorite = Favorite(
         id = 0,
         departureCode = "GRL",
         destinationCode = "BLD"
     )
-    private val secondeFavorite = Favorite(
+    private val secondFavorite = Favorite(
         id = 1,
         departureCode = "ART",
         destinationCode = "TRA"
@@ -53,9 +61,9 @@ class FlightDaoTest {
         var favorites = flightDao.getAllFavorites().first()
         assertEquals(firstFavorite, favorites[0])
 
-        flightDao.insertFavorite(secondeFavorite)
+        flightDao.insertFavorite(secondFavorite)
         favorites = flightDao.getAllFavorites().first()
-        assertEquals(secondeFavorite, favorites[1])
+        assertEquals(secondFavorite, favorites[1])
     }
 
     @Test
@@ -66,15 +74,23 @@ class FlightDaoTest {
         assertEquals(2, favorites.size)
 
         flightDao.deleteFavorite(firstFavorite)
-        flightDao.deleteFavorite(secondeFavorite)
+        flightDao.deleteFavorite(secondFavorite)
         favorites = flightDao.getAllFavorites().first()
         assertTrue(favorites.isEmpty())
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun flightDatabase_getAirportByIata() = runBlocking {
+        flightDao.insertAirport(testAirport)
+        val thisAirport = flightDao.getAirportByIata("ASC").first()
+        assertEquals(testAirport, thisAirport)
     }
 
     private suspend fun addOneFavorite() = flightDao.insertFavorite(firstFavorite)
 
     private suspend fun addTwoFavorites() {
         flightDao.insertFavorite(firstFavorite)
-        flightDao.insertFavorite(secondeFavorite)
+        flightDao.insertFavorite(secondFavorite)
     }
 }
