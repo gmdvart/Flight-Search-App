@@ -82,8 +82,12 @@ fun ResultScreen(
             ResultsNotFound(modifier = Modifier.padding(4.dp))
         }
     } else {
-        searchViewModel.refreshFavorites()
-        FavoritesScreen(searchViewModel = searchViewModel)
+        FavoritesScreen(
+            favoriteItems = searchUiState.favorites,
+            onItemCLick = {
+                coroutineScope.launch { searchViewModel.removeFavorite(it) }
+            }
+        )
     }
 }
 
@@ -100,16 +104,20 @@ fun ResultsNotFound(modifier: Modifier = Modifier) {
 @Composable
 fun FavoritesScreen(
     modifier: Modifier = Modifier,
-    searchViewModel: SearchViewModel
+    favoriteItems: List<FavoriteItem>,
+    onItemCLick: (Int) -> Unit,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        if (searchViewModel.searchUiState.favorites.isEmpty()) {
+        if (favoriteItems.isEmpty()) {
             Text(
                 text = stringResource(id = R.string.favourites_are_empty),
                 modifier = Modifier.align(Alignment.Center)
             )
         } else {
-//            FlightVerticalPairColumn()
+            FavoriteVerticalColumn(
+                favoriteItems = favoriteItems,
+                onItemClick = onItemCLick
+            )
         }
     }
 }

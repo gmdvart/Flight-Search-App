@@ -20,7 +20,7 @@ class HomeViewModel(private val flightRepository: FlightRepository) : ViewModel(
             HomeUiState()
         )
 
-    suspend fun removeFavorite(favorite: Favorite) = flightRepository.deleteFavorite(favorite)
+//    suspend fun removeFavorite(favorite: Favorite) = flightRepository.deleteFavoriteById(favorite)
 
     suspend fun addToFavorite(favorite: Favorite) = flightRepository.insertFavorite(favorite)
 }

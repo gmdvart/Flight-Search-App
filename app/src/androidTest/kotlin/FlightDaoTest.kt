@@ -72,8 +72,8 @@ class FlightDaoTest {
         var favorites = flightDao.getAllFavorites().first()
         assertEquals(2, favorites.size)
 
-        flightDao.deleteFavorite(firstFavorite)
-        flightDao.deleteFavorite(secondFavorite)
+        flightDao.deleteFavoriteById(firstFavorite.id)
+        flightDao.deleteFavoriteById(secondFavorite.id)
         favorites = flightDao.getAllFavorites().first()
         assertTrue(favorites.isEmpty())
     }
@@ -96,6 +96,16 @@ class FlightDaoTest {
         flightDao.deleteFavoriteById(firstFavorite.id)
         items = flightDao.getAllFavorites().first()
         assertTrue(items.isEmpty())
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun flightDatabase_checkQuantity() = runBlocking {
+        addTwoFavorites()
+        val firstQuantity = flightDao.getQuantityOfFavorite(firstFavorite.id)
+        val secondQuantity = flightDao.getQuantityOfFavorite(secondFavorite.id)
+        assertEquals(1, firstQuantity)
+        assertEquals(1, secondQuantity)
     }
 
     private suspend fun addOneFavorite() = flightDao.insertFavorite(firstFavorite)

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.flightsearchapp.data.database.Airport
 import com.example.flightsearchapp.data.database.Favorite
+import com.example.flightsearchapp.data.database.toFavoriteItem
 import com.example.flightsearchapp.data.repository.FlightRepository
 import com.example.flightsearchapp.utlis.generatePairsToElement
 import kotlinx.coroutines.async
@@ -53,11 +54,15 @@ class SearchViewModel(
         flightRepository.insertFavorite(
             favorite = favorite
         )
+        refreshFavorites()
     }
 
-    suspend fun removeFavorite(favorite: Favorite) {
-        flightRepository.deleteFavoriteById(favorite = favorite)
+    suspend fun removeFavorite(favoriteId: Int) {
+        flightRepository.deleteFavoriteById(id = favoriteId)
+        refreshFavorites()
     }
+
+    suspend fun getAirport(iataCode: String): Airport = flightRepository.getAirportByIata(iataCode).first()
 
     fun refreshFavorites() {
         viewModelScope.launch {
@@ -65,6 +70,12 @@ class SearchViewModel(
                 favorites = flightRepository.getAllFavorites()
                     .filterNotNull()
                     .first()
+                    .map {
+                        it.toFavoriteItem(
+                            departureName = getAirport(it.departureCode).name,
+                            destinationName = getAirport(it.destinationCode).name
+                        )
+                    }
             )
         }
     }

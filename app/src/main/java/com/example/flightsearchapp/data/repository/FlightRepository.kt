@@ -12,13 +12,15 @@ interface FlightRepository {
 
     fun getAllFavorites(): Flow<List<Favorite>>
 
+    fun getQuantityOfFavorite(id: Int): Int
+
     fun getAllAirports(): Flow<List<Airport>>
 
     fun getAirportsByIataOrName(searchString: String): Flow<List<Airport>>
 
     fun getAirportById(id: Int): Flow<Airport>
 
-    fun getAirportById(iataCode: String): Flow<Airport>
+    fun getAirportByIata(iataCode: String): Flow<Airport>
 }
 
 class OfflineFlightRepository(private val flightDao: FlightDao) : FlightRepository {
@@ -28,11 +30,13 @@ class OfflineFlightRepository(private val flightDao: FlightDao) : FlightReposito
 
     override fun getAllFavorites(): Flow<List<Favorite>> = flightDao.getAllFavorites()
 
+    override fun getQuantityOfFavorite(id: Int): Int = flightDao.getQuantityOfFavorite(id)
+
     override fun getAllAirports(): Flow<List<Airport>> = flightDao.getAllAirports()
 
     override fun getAirportsByIataOrName(searchString: String): Flow<List<Airport>> = flightDao.getAirportsByIataOrName(searchString)
 
     override fun getAirportById(id: Int): Flow<Airport> = flightDao.getAirportById(id)
 
-    override fun getAirportById(iataCode: String): Flow<Airport> = flightDao.getAirportByIata(iataCode)
+    override fun getAirportByIata(iataCode: String): Flow<Airport> = flightDao.getAirportByIata(iataCode)
 }
