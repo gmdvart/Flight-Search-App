@@ -2,9 +2,10 @@ package com.example.flightsearchapp.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,43 +16,46 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.flightsearchapp.R
 import com.example.flightsearchapp.data.database.Airport
-import com.example.flightsearchapp.data.database.Favorite
 import com.example.flightsearchapp.ui.theme.FlightSearchAppTheme
+import com.example.flightsearchapp.ui.viewModels.FavoriteItem
 
 @Composable
-fun FlightAirportItem(
+fun FavoriteAirportInformation(
     modifier: Modifier = Modifier,
-    airport: Airport,
-    isClickEnabled: Boolean = true,
-    onClick: (Airport) -> Unit = {}
+    airportIata: String,
+    airportFullName: String
 ) {
     Row(modifier = modifier
         .padding(4.dp)
-        .clickable(enabled = isClickEnabled) { onClick(airport) }
         .fillMaxWidth()
     ) {
-        Text(text = airport.iataCode)
+        Text(text = airportIata)
         Spacer(modifier = modifier.weight(1f))
-        Text(text = airport.name)
+        Text(text = airportFullName)
     }
 }
-
 @Composable
-fun FlightAirportPairItem(
+fun FavoriteAirportItem(
     modifier: Modifier = Modifier,
-    pair: Pair<Airport, Airport>,
-    onClick: (Pair<Airport, Airport>) -> Unit = {},
-    favoriteIndicatorColor: Color = Color.Gray
+    favoriteItem: FavoriteItem,
+    onClick: (Int) -> Unit = {},
+    favoriteIndicatorColor: Color = Color.Red
 ) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = stringResource(id = R.string.flight_depart))
-            FlightAirportItem(airport = pair.first, isClickEnabled = false)
+            FavoriteAirportInformation(
+                airportIata = favoriteItem.departureCode,
+                airportFullName = favoriteItem.departureName
+            )
             Text(text = stringResource(id = R.string.flight_arrive))
-            FlightAirportItem(airport = pair.second, isClickEnabled = false)
+            FavoriteAirportInformation(
+                airportIata = favoriteItem.destinationCode,
+                airportFullName = favoriteItem.destinationName
+            )
         }
         IconButton(
-            onClick = { onClick(pair) },
+            onClick = { onClick(favoriteItem.favoriteId) },
             content = {
                 Icon(
                     imageVector = Icons.Outlined.Favorite,
@@ -65,20 +69,16 @@ fun FlightAirportPairItem(
 
 @Preview(showBackground = true, widthDp = 300)
 @Composable
-fun FlightAirportItemPreview() {
+fun FavoriteAirportItemPreview() {
     FlightSearchAppTheme {
-        FlightAirportItem(airport = Airport(0, "LOL", "Lead of Laugh", 999), isClickEnabled = false)
-    }
-}
-
-@Preview(showBackground = true, widthDp = 300)
-@Composable
-fun FlightAirportPairItemPreview() {
-    val firstAirport = Airport(0, "LOL", "Lead of Laugh", 999)
-    val secondAirport = Airport(1, "SNA", "Saint Name Airport", 666)
-    val mockData = Pair(firstAirport, secondAirport)
-
-    FlightSearchAppTheme {
-        FlightAirportPairItem(pair = mockData)
+        FavoriteAirportItem(
+            favoriteItem = FavoriteItem(
+                favoriteId = 0,
+                departureCode = "IAS",
+                departureName = "International Airport of Some City",
+                destinationCode = "AST",
+                destinationName = "Airport of Some Town"
+            ),
+        )
     }
 }

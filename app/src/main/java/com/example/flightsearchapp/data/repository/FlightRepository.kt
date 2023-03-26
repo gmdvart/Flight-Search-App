@@ -18,7 +18,7 @@ interface FlightRepository {
 
     fun getAirportById(id: Int): Flow<Airport>
 
-    fun getAirportById(iataCode: String): Flow<Airport>
+    fun getAirportByIata(iataCode: String): Flow<Airport>
 }
 
 class OfflineFlightRepository(private val flightDao: FlightDao) : FlightRepository {
@@ -34,5 +34,5 @@ class OfflineFlightRepository(private val flightDao: FlightDao) : FlightReposito
 
     override fun getAirportById(id: Int): Flow<Airport> = flightDao.getAirportById(id)
 
-    override fun getAirportById(iataCode: String): Flow<Airport> = flightDao.getAirportByIata(iataCode)
+    override fun getAirportByIata(iataCode: String): Flow<Airport> = flightDao.getAirportByIata(iataCode)
 }

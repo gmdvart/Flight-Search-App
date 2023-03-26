@@ -109,7 +109,10 @@ fun FavoritesScreen(
                 modifier = Modifier.align(Alignment.Center)
             )
         } else {
-//            FlightVerticalPairColumn()
+//            FavoriteVerticalColumn(
+//                favoriteItems = searchViewModel.searchUiState.favorites,
+//                onItemClick =
+//            )
         }
     }
 }
