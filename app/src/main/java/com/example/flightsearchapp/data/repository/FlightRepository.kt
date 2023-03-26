@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface FlightRepository {
     suspend fun insertFavorite(favorite: Favorite)
 
-    suspend fun deleteFavorite(favorite: Favorite)
+    suspend fun deleteFavoriteById(id: Int)
 
     fun getAllFavorites(): Flow<List<Favorite>>
 
@@ -24,7 +24,7 @@ interface FlightRepository {
 class OfflineFlightRepository(private val flightDao: FlightDao) : FlightRepository {
     override suspend fun insertFavorite(favorite: Favorite) = flightDao.insertFavorite(favorite)
 
-    override suspend fun deleteFavorite(favorite: Favorite) = flightDao.deleteFavorite(favorite)
+    override suspend fun deleteFavoriteById(id: Int) = flightDao.deleteFavoriteById(id)
 
     override fun getAllFavorites(): Flow<List<Favorite>> = flightDao.getAllFavorites()
 

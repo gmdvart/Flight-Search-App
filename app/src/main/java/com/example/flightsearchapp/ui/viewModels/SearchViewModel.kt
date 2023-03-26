@@ -56,7 +56,7 @@ class SearchViewModel(
     }
 
     suspend fun removeFavorite(favorite: Favorite) {
-        flightRepository.deleteFavorite(favorite = favorite)
+        flightRepository.deleteFavoriteById(favorite = favorite)
     }
 
     fun refreshFavorites() {

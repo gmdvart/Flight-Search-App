@@ -11,8 +11,8 @@ interface FlightDao {
     @Insert(entity = Favorite::class)
     suspend fun insertFavorite(favorite: Favorite)
 
-    @Delete(entity = Favorite::class)
-    suspend fun deleteFavorite(favorite: Favorite)
+    @Query("DELETE FROM favorite WHERE id = :id")
+    suspend fun deleteFavoriteById(id: Int)
 
     @Query("SELECT * FROM favorite")
     fun getAllFavorites(): Flow<List<Favorite>>

@@ -9,8 +9,7 @@ import com.example.flightsearchapp.data.database.FlightDatabase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -85,6 +84,18 @@ class FlightDaoTest {
         flightDao.insertAirport(testAirport)
         val thisAirport = flightDao.getAirportByIata("ASC").first()
         assertEquals(testAirport, thisAirport)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun flightDatabase_deleteFavoriteById() = runBlocking {
+        addOneFavorite()
+        var items = flightDao.getAllFavorites().first()
+        assertFalse(items.isEmpty())
+
+        flightDao.deleteFavoriteById(firstFavorite.id)
+        items = flightDao.getAllFavorites().first()
+        assertTrue(items.isEmpty())
     }
 
     private suspend fun addOneFavorite() = flightDao.insertFavorite(firstFavorite)
