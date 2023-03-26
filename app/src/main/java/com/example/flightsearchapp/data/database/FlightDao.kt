@@ -17,6 +17,9 @@ interface FlightDao {
     @Query("SELECT * FROM favorite")
     fun getAllFavorites(): Flow<List<Favorite>>
 
+    @Query("SELECT COUNT() FROM favorite WHERE id = :id")
+    fun getQuantityOfFavorite(id: Int): Int
+
     /** Method above is used only for testing! **/
     @Insert(entity = Airport::class)
     suspend fun insertAirport(airport: Airport)
