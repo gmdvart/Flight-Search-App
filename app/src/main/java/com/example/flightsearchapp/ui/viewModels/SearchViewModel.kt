@@ -54,10 +54,12 @@ class SearchViewModel(
         flightRepository.insertFavorite(
             favorite = favorite
         )
+        refreshFavorites()
     }
 
-    suspend fun removeFavorite(favorite: Favorite) {
-        flightRepository.deleteFavorite(favorite = favorite)
+    suspend fun removeFavorite(favoriteId: Int) {
+        flightRepository.deleteFavoriteById(id = favoriteId)
+        refreshFavorites()
     }
 
     suspend fun getAirport(iataCode: String): Airport = flightRepository.getAirportByIata(iataCode).first()
