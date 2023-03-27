@@ -7,10 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.flightsearchapp.data.database.Airport
 import com.example.flightsearchapp.data.database.Favorite
+import com.example.flightsearchapp.data.database.createFavoriteIdWith
 import com.example.flightsearchapp.data.database.toFavoriteItem
 import com.example.flightsearchapp.data.repository.FlightRepository
 import com.example.flightsearchapp.utlis.generatePairsToElement
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -23,6 +23,10 @@ class SearchViewModel(
 
     var searchUiState by mutableStateOf(SearchUiState())
         private set
+
+    fun updateSearchUiState(newSearchUiState: SearchUiState) {
+        searchUiState = newSearchUiState
+    }
 
     fun performSearch(searchText: String) {
         searchUiState = searchUiState.copy(searchText = searchText, resultsBySelected = listOf())
@@ -38,31 +42,44 @@ class SearchViewModel(
         }
     }
 
-    fun updateSearchUiState(newSearchUiState: SearchUiState) {
-        searchUiState = newSearchUiState
-    }
-
     fun selectAirport(airport: Airport) = viewModelScope.launch {
         val allAirports = flightRepository.getAllAirports().first()
-        val pairs = async { allAirports.generatePairsToElement(airport) }
+        val pairs = allAirports.generatePairsToElement(airport)
+        val potentialFavorites = toPotentialFavorites(pairs)
 
-        searchUiState = searchUiState.copy(resultsBySelected = pairs.await())
-    }
-
-    suspend fun addPairToFavorite(pair: Pair<Airport, Airport>) {
-        val favorite = flightToFavorite(pair)
-        flightRepository.insertFavorite(
-            favorite = favorite
-        )
-        refreshFavorites()
-    }
-
-    suspend fun removeFavorite(favoriteId: Int) {
-        flightRepository.deleteFavoriteById(id = favoriteId)
-        refreshFavorites()
+        searchUiState = searchUiState.copy(resultsBySelected = potentialFavorites)
     }
 
     suspend fun getAirport(iataCode: String): Airport = flightRepository.getAirportByIata(iataCode).first()
+
+    suspend fun markFlightAsFavorite(potentialFavoriteItem: FavoriteItem) {
+        if (!flightRepository.isContainsFavorite(potentialFavoriteItem.id)) {
+            flightRepository.insertFavorite(potentialFavoriteItem.toFavorite())
+        } else {
+            removeFavorite(potentialFavoriteItem)
+        }
+        refreshFavorites()
+    }
+
+    suspend fun addPairToFavorite(pair: Pair<Airport, Airport>) {
+        val favoriteId = pair.first.createFavoriteIdWith(pair.second)
+
+        if (flightRepository.isContainsFavorite(favoriteId)) {
+            val favorite = flightToFavorite(pair)
+            flightRepository.insertFavorite(
+                favorite = favorite
+            )
+        } else {
+//            removeFavorite(favoriteId)
+        }
+
+        refreshFavorites()
+    }
+
+    suspend fun removeFavorite(favoriteItem: FavoriteItem) {
+        flightRepository.deleteFavorite(favoriteItem.toFavorite())
+        refreshFavorites()
+    }
 
     fun refreshFavorites() {
         viewModelScope.launch {
@@ -73,12 +90,32 @@ class SearchViewModel(
                     .map {
                         it.toFavoriteItem(
                             departureName = getAirport(it.departureCode).name,
-                            destinationName = getAirport(it.destinationCode).name
+                            destinationName = getAirport(it.destinationCode).name,
                         )
                     }
             )
         }
     }
+
+    private suspend fun toPotentialFavorites(pairs: List<Pair<Airport, Airport>>): List<FavoriteItem> {
+        return pairs.map { pair ->
+            val favoriteId = pair.first.createFavoriteIdWith(pair.second)
+            FavoriteItem(
+                id = favoriteId,
+                departureCode = pair.first.iataCode,
+                departureName = pair.first.name,
+                destinationCode = pair.second.iataCode,
+                destinationName = pair.second.name,
+                markedAsFavorite = flightRepository.isContainsFavorite(favoriteId)
+            )
+        }
+    }
+
+    private fun flightToFavorite(pair: Pair<Airport, Airport>): Favorite = Favorite(
+        id = pair.first.createFavoriteIdWith(pair.second),
+        departureCode = pair.first.iataCode,
+        destinationCode = pair.second.iataCode
+    )
 
     init {
         refreshFavorites()

@@ -7,8 +7,9 @@ data class SearchUiState(
     val searchText: String = "",
     val isSearching: Boolean = false,
     val results: List<Airport> = listOf(),
-    val resultsBySelected: List<Pair<Airport, Airport>> = listOf(),
-    val favorites: List<FavoriteItem> = listOf()
+    val resultsBySelected: List<FavoriteItem> = listOf(),
+    val favorites: List<FavoriteItem> = listOf(),
+    val favoritesId: List<Int> = listOf()
 )
 
 fun SearchUiState.isSearchStringEmpty(): Boolean = searchText.isEmpty()
@@ -17,16 +18,18 @@ fun SearchUiState.isResultsNotFound(): Boolean = searchText.isEmpty() || searchT
 
 fun SearchUiState.isResultSelected(): Boolean = resultsBySelected.isNotEmpty()
 
-fun flightToFavorite(pair: Pair<Airport, Airport>): Favorite = Favorite(
-    id = (pair.first.id.toString() + pair.second.id.toString()).toInt(),
-    departureCode = pair.first.iataCode,
-    destinationCode = pair.second.iataCode
-)
-
 data class FavoriteItem(
-    val favoriteId: Int,
+    val id: Int,
     val departureCode: String,
     val destinationCode: String,
     val departureName: String,
-    val destinationName: String
+    val destinationName: String,
+    var markedAsFavorite: Boolean = false
+)
+
+
+fun FavoriteItem.toFavorite(): Favorite = Favorite(
+    id = id,
+    departureCode = departureCode,
+    destinationCode = destinationCode
 )

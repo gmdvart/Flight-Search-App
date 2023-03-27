@@ -13,9 +13,10 @@ data class Favorite(
 )
 
 fun Favorite.toFavoriteItem(departureName: String, destinationName: String) = FavoriteItem(
-    favoriteId = id,
+    id = id,
     departureCode = departureCode,
     departureName = departureName,
     destinationCode = destinationCode,
-    destinationName = destinationName
+    destinationName = destinationName,
+    markedAsFavorite = true
 )

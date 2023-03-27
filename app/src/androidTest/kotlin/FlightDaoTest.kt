@@ -72,8 +72,8 @@ class FlightDaoTest {
         var favorites = flightDao.getAllFavorites().first()
         assertEquals(2, favorites.size)
 
-        flightDao.deleteFavoriteById(firstFavorite.id)
-        flightDao.deleteFavoriteById(secondFavorite.id)
+        flightDao.deleteFavorite(firstFavorite)
+        flightDao.deleteFavorite(secondFavorite)
         favorites = flightDao.getAllFavorites().first()
         assertTrue(favorites.isEmpty())
     }

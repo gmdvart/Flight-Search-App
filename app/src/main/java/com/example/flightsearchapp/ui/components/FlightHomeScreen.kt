@@ -65,12 +65,12 @@ fun ResultScreen(
 
     if (searchUiState.isSearching) {
         if (searchUiState.isResultSelected()) {
-            FlightVerticalPairColumn(
+            FavoriteVerticalColumn(
                 modifier = Modifier.padding(4.dp),
-                airportPairs = searchUiState.resultsBySelected,
+                favoriteItems = searchUiState.resultsBySelected,
                 onItemClick = {
-                    coroutineScope.launch { searchViewModel.addPairToFavorite(it) }
-                }
+                    coroutineScope.launch { searchViewModel.markFlightAsFavorite(it) }
+                },
             )
         } else if (!searchUiState.isResultsNotFound()) {
             FlightVerticalColumn(
@@ -105,7 +105,7 @@ fun ResultsNotFound(modifier: Modifier = Modifier) {
 fun FavoritesScreen(
     modifier: Modifier = Modifier,
     favoriteItems: List<FavoriteItem>,
-    onItemCLick: (Int) -> Unit,
+    onItemCLick: (FavoriteItem) -> Unit,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         if (favoriteItems.isEmpty()) {

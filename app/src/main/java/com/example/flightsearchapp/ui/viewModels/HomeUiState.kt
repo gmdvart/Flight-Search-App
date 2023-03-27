@@ -1,7 +1,0 @@
-package com.example.flightsearchapp.ui.viewModels
-
-import com.example.flightsearchapp.data.database.Favorite
-
-data class HomeUiState(val favorites: List<Favorite> = listOf())
-
-fun HomeUiState.isFavoritesEmpty(): Boolean = favorites.isEmpty()

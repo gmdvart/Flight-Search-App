@@ -8,11 +8,13 @@ import kotlinx.coroutines.flow.Flow
 interface FlightRepository {
     suspend fun insertFavorite(favorite: Favorite)
 
+    suspend fun deleteFavorite(favorite: Favorite)
+
     suspend fun deleteFavoriteById(id: Int)
 
     fun getAllFavorites(): Flow<List<Favorite>>
 
-    fun getQuantityOfFavorite(id: Int): Int
+    suspend fun isContainsFavorite(id: Int): Boolean
 
     fun getAllAirports(): Flow<List<Airport>>
 
@@ -26,11 +28,13 @@ interface FlightRepository {
 class OfflineFlightRepository(private val flightDao: FlightDao) : FlightRepository {
     override suspend fun insertFavorite(favorite: Favorite) = flightDao.insertFavorite(favorite)
 
+    override suspend fun deleteFavorite(favorite: Favorite) = flightDao.deleteFavorite(favorite)
+
     override suspend fun deleteFavoriteById(id: Int) = flightDao.deleteFavoriteById(id)
 
     override fun getAllFavorites(): Flow<List<Favorite>> = flightDao.getAllFavorites()
 
-    override fun getQuantityOfFavorite(id: Int): Int = flightDao.getQuantityOfFavorite(id)
+    override suspend fun isContainsFavorite(id: Int): Boolean = flightDao.getQuantityOfFavorite(id) == 1
 
     override fun getAllAirports(): Flow<List<Airport>> = flightDao.getAllAirports()
 

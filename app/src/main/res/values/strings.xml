@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FlightSearchApp</string>
+    <string name="app_name">Flight Search</string>
     <string name="found_nothing">Found nothing.</string>
     <string name="favourites_are_empty">Favorites are empty.</string>
     <string name="favourites_are_not_empty">You have some favorites flights.</string>

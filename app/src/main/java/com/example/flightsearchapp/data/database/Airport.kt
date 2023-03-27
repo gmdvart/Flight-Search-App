@@ -11,3 +11,5 @@ data class Airport(
     val name: String,
     val passengers: Int
 )
+
+fun Airport.createFavoriteIdWith(airport: Airport): Int = (id.toString() + airport.id.toString()).toInt()
