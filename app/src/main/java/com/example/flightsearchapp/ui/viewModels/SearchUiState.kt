@@ -9,7 +9,8 @@ data class SearchUiState(
     val results: List<Airport> = listOf(),
     val resultsBySelected: List<FavoriteItem> = listOf(),
     val favorites: List<FavoriteItem> = listOf(),
-    val favoritesId: List<Int> = listOf()
+    val favoritesId: List<Int> = listOf(),
+    val isBusy: Boolean = false
 )
 
 fun SearchUiState.isSearchStringEmpty(): Boolean = searchText.isEmpty()

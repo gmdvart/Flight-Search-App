@@ -13,44 +13,44 @@ import com.example.flightsearchapp.data.repository.FlightRepository
 import com.example.flightsearchapp.utlis.generatePairsToElement
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.io.IOException
+import java.lang.Exception
 
 class SearchViewModel(
-    val flightRepository: FlightRepository
+    private val flightRepository: FlightRepository
 ) : ViewModel() {
-    companion object {
-        val TIMEOUT_MILLS = 5_000L
-    }
-
     var searchUiState by mutableStateOf(SearchUiState())
         private set
 
-    fun updateSearchUiState(newSearchUiState: SearchUiState) {
-        searchUiState = newSearchUiState
+    fun isUserSearching(isSearching: Boolean) {
+        searchUiState = searchUiState.copy(isSearching = isSearching)
     }
 
     fun performSearch(searchText: String) {
-        searchUiState = searchUiState.copy(searchText = searchText, resultsBySelected = listOf())
+        searchUiState = searchUiState.copy(searchText = searchText, resultsBySelected = listOf(), isBusy = true)
 
         if (!searchUiState.isSearchStringEmpty()) {
             // Performing search
             viewModelScope.launch {
                 val results = flightRepository.getAirportsByIataOrName(searchText).first()
-                searchUiState = searchUiState.copy(results = results)
+                searchUiState = searchUiState.copy(results = results, isBusy = false)
             }
         } else {
-            searchUiState = searchUiState.copy(results = listOf())
+            searchUiState = searchUiState.copy(results = listOf(), isBusy = false)
         }
     }
 
     fun selectAirport(airport: Airport) = viewModelScope.launch {
+        searchUiState = searchUiState.copy(isBusy = true)
+
         val allAirports = flightRepository.getAllAirports().first()
         val pairs = allAirports.generatePairsToElement(airport)
         val potentialFavorites = toPotentialFavorites(pairs)
 
-        searchUiState = searchUiState.copy(resultsBySelected = potentialFavorites)
+        searchUiState = searchUiState.copy(resultsBySelected = potentialFavorites, isBusy = false)
     }
 
-    suspend fun getAirport(iataCode: String): Airport = flightRepository.getAirportByIata(iataCode).first()
+    private suspend fun getAirport(iataCode: String): Airport = flightRepository.getAirportByIata(iataCode).first()
 
     suspend fun markFlightAsFavorite(potentialFavoriteItem: FavoriteItem) {
         if (!flightRepository.isContainsFavorite(potentialFavoriteItem.id)) {
@@ -66,19 +66,25 @@ class SearchViewModel(
         refreshFavorites()
     }
 
-    private fun refreshFavorites() {
+    private fun refreshFavorites(isBusy: Boolean = false) {
         viewModelScope.launch {
-            searchUiState = searchUiState.copy(
-                favorites = flightRepository.getAllFavorites()
-                    .filterNotNull()
-                    .first()
-                    .map {
-                        it.toFavoriteItem(
-                            departureName = getAirport(it.departureCode).name,
-                            destinationName = getAirport(it.destinationCode).name,
-                        )
-                    }
-            )
+            if (isBusy) searchUiState = searchUiState.copy(isBusy = true)
+            try {
+                searchUiState = searchUiState.copy(
+                    favorites = flightRepository.getAllFavorites()
+                        .filterNotNull()
+                        .first()
+                        .map {
+                            it.toFavoriteItem(
+                                departureName = getAirport(it.departureCode).name,
+                                destinationName = getAirport(it.destinationCode).name,
+                            )
+                        },
+                    isBusy = false
+                )
+            } catch (e: IOException) {
+                throw  Exception(e.message)
+            }
         }
     }
 
@@ -96,13 +102,7 @@ class SearchViewModel(
         }
     }
 
-    private fun flightToFavorite(pair: Pair<Airport, Airport>): Favorite = Favorite(
-        id = pair.first.createFavoriteIdWith(pair.second),
-        departureCode = pair.first.iataCode,
-        destinationCode = pair.second.iataCode
-    )
-
     init {
-        refreshFavorites()
+        refreshFavorites(isBusy = true)
     }
 }

@@ -33,7 +33,7 @@ fun FlightHomeScreen(
             searchUiState = searchViewModel.searchUiState,
             onValueChange = {
                 searchViewModel.performSearch(it)
-                searchViewModel.updateSearchUiState(searchViewModel.searchUiState.copy(isSearching = true))
+                searchViewModel.isUserSearching(isSearching = true)
             }
         )
         ResultScreen(
@@ -49,7 +49,7 @@ fun FlightHomeScreen(
         enabled = true,
         onBack = {
             focusManager.clearFocus()
-            searchViewModel.updateSearchUiState(searchViewModel.searchUiState.copy(isSearching = false))
+            searchViewModel.isUserSearching(isSearching = false)
         }
     )
 }
@@ -66,6 +66,9 @@ fun ResultScreen(
         searchUiState.favorites.associate { it.id to it.markedAsFavorite }.toMutableMap()
     }
 
+    if (searchUiState.isBusy) {
+        LoadingScreen()
+    }
     if (searchUiState.isSearching) {
         if (searchUiState.isResultSelected()) {
             FavoriteVerticalColumn(
@@ -101,6 +104,16 @@ fun ResultsNotFound(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize()) {
         Text(
             text = stringResource(id = R.string.found_nothing),
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+}
+
+@Composable
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize()) {
+        Text(
+            text = "Loading...",
             modifier = Modifier.align(Alignment.Center)
         )
     }
