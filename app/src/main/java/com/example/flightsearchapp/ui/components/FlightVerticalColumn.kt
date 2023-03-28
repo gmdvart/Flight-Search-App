@@ -1,26 +1,17 @@
 package com.example.flightsearchapp.ui.components
 
-import android.annotation.SuppressLint
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -69,10 +60,11 @@ fun FavoriteVerticalColumn(
     modifier: Modifier = Modifier,
     favoriteItems: List<FavoriteItem>,
     onItemClick: (FavoriteItem) -> Unit,
+    selectedItemsState: MutableMap<Int, Boolean> = mutableMapOf()
 ) {
-    val selectedItems: MutableMap<Int, Boolean> = remember {
-        favoriteItems.associate { it.id to it.markedAsFavorite }.toMutableMap()
-    }
+//    val selectedItems: MutableMap<Int, Boolean> = remember {
+//        favoriteItems.associate { it.id to it.markedAsFavorite }.toMutableMap()
+//    }
 
     LazyColumn(modifier = modifier.fillMaxSize()) {
         items(items = favoriteItems, key = { favoriteItem -> favoriteItem.id }) { favorite ->
@@ -83,14 +75,14 @@ fun FavoriteVerticalColumn(
                 )
                 IconButton(
                     onClick = {
-                        selectedItems[favorite.id] = selectedItems[favorite.id] != true
+                        selectedItemsState[favorite.id] = selectedItemsState[favorite.id] != true
                         onItemClick(favorite)
                     },
                     content = {
                         Icon(
                             imageVector = Icons.Outlined.Favorite,
                             contentDescription = stringResource(id = R.string.favorite),
-                            tint = if (selectedItems[favorite.id] == true)
+                            tint = if (selectedItemsState[favorite.id] == true)
                                 Color.Red else Color.Gray
                         )
                     }

@@ -61,27 +61,12 @@ class SearchViewModel(
         refreshFavorites()
     }
 
-    suspend fun addPairToFavorite(pair: Pair<Airport, Airport>) {
-        val favoriteId = pair.first.createFavoriteIdWith(pair.second)
-
-        if (flightRepository.isContainsFavorite(favoriteId)) {
-            val favorite = flightToFavorite(pair)
-            flightRepository.insertFavorite(
-                favorite = favorite
-            )
-        } else {
-//            removeFavorite(favoriteId)
-        }
-
-        refreshFavorites()
-    }
-
     suspend fun removeFavorite(favoriteItem: FavoriteItem) {
         flightRepository.deleteFavorite(favoriteItem.toFavorite())
         refreshFavorites()
     }
 
-    fun refreshFavorites() {
+    private fun refreshFavorites() {
         viewModelScope.launch {
             searchUiState = searchUiState.copy(
                 favorites = flightRepository.getAllFavorites()

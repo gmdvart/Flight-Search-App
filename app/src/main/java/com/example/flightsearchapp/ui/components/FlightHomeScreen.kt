@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.flightsearchapp.R
 import com.example.flightsearchapp.data.database.Airport
-import com.example.flightsearchapp.data.database.Favorite
 import com.example.flightsearchapp.ui.theme.FlightSearchAppTheme
 import com.example.flightsearchapp.ui.viewModels.*
 import kotlinx.coroutines.launch
@@ -63,6 +62,10 @@ fun ResultScreen(
     val coroutineScope = rememberCoroutineScope()
     val searchUiState = searchViewModel.searchUiState
 
+    val selectedItems: MutableMap<Int, Boolean> = remember {
+        searchUiState.favorites.associate { it.id to it.markedAsFavorite }.toMutableMap()
+    }
+
     if (searchUiState.isSearching) {
         if (searchUiState.isResultSelected()) {
             FavoriteVerticalColumn(
@@ -71,6 +74,7 @@ fun ResultScreen(
                 onItemClick = {
                     coroutineScope.launch { searchViewModel.markFlightAsFavorite(it) }
                 },
+                selectedItemsState = selectedItems
             )
         } else if (!searchUiState.isResultsNotFound()) {
             FlightVerticalColumn(
@@ -86,7 +90,8 @@ fun ResultScreen(
             favoriteItems = searchUiState.favorites,
             onItemCLick = {
                 coroutineScope.launch { searchViewModel.removeFavorite(it) }
-            }
+            },
+            selectedItemsState = selectedItems
         )
     }
 }
@@ -106,6 +111,7 @@ fun FavoritesScreen(
     modifier: Modifier = Modifier,
     favoriteItems: List<FavoriteItem>,
     onItemCLick: (FavoriteItem) -> Unit,
+    selectedItemsState: MutableMap<Int, Boolean>
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         if (favoriteItems.isEmpty()) {
@@ -116,7 +122,8 @@ fun FavoritesScreen(
         } else {
             FavoriteVerticalColumn(
                 favoriteItems = favoriteItems,
-                onItemClick = onItemCLick
+                onItemClick = onItemCLick,
+                selectedItemsState = selectedItemsState
             )
         }
     }
