@@ -25,7 +25,7 @@ fun FlightSearchTextField(
         value = searchUiState.searchText,
         onValueChange = { onValueChange(it) },
         modifier = modifier
-            .padding(4.dp)
+            .padding(8.dp)
             .fillMaxWidth(),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,

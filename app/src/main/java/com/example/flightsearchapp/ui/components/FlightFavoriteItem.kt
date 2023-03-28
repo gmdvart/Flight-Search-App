@@ -1,7 +1,6 @@
 package com.example.flightsearchapp.ui.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,9 +20,9 @@ fun FavoriteAirportInformation(
         .padding(4.dp)
         .fillMaxWidth()
     ) {
-        Text(text = airportIata)
+        FlightAirportIataHeader(airportIata = airportIata)
         Spacer(modifier = modifier.weight(1f))
-        Text(text = airportFullName)
+        FlightAirportNameHeader(airportFullName = airportFullName)
     }
 }
 @Composable
@@ -32,13 +31,13 @@ fun FavoriteAirportItem(
     favoriteItem: FavoriteItem,
 
 ) {
-    Column(modifier = modifier) {
-        Text(text = stringResource(id = R.string.flight_depart))
+    Column(modifier = modifier.padding(8.dp)) {
+        FlightInfoHeader(info = stringResource(id = R.string.flight_depart))
         FavoriteAirportInformation(
             airportIata = favoriteItem.departureCode,
             airportFullName = favoriteItem.departureName
         )
-        Text(text = stringResource(id = R.string.flight_arrive))
+        FlightInfoHeader(info = stringResource(id = R.string.flight_arrive))
         FavoriteAirportInformation(
             airportIata = favoriteItem.destinationCode,
             airportFullName = favoriteItem.destinationName

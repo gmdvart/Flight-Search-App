@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.flightsearchapp.R
 import com.example.flightsearchapp.data.database.Airport
-import com.example.flightsearchapp.data.database.Favorite
 import com.example.flightsearchapp.ui.theme.FlightSearchAppTheme
 
 @Composable
@@ -30,9 +28,9 @@ fun FlightAirportItem(
         .clickable(enabled = isClickEnabled) { onClick(airport) }
         .fillMaxWidth()
     ) {
-        Text(text = airport.iataCode)
+        FlightAirportIataHeader(airportIata = airport.iataCode)
         Spacer(modifier = modifier.weight(1f))
-        Text(text = airport.name)
+        FlightAirportNameHeader(airportFullName = airport.name)
     }
 }
 
@@ -45,9 +43,9 @@ fun FlightAirportPairItem(
 ) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = stringResource(id = R.string.flight_depart))
+            FlightInfoHeader(info = stringResource(id = R.string.flight_depart))
             FlightAirportItem(airport = pair.first, isClickEnabled = false)
-            Text(text = stringResource(id = R.string.flight_arrive))
+            FlightInfoHeader(info = stringResource(id = R.string.flight_arrive))
             FlightAirportItem(airport = pair.second, isClickEnabled = false)
         }
         IconButton(
@@ -55,7 +53,7 @@ fun FlightAirportPairItem(
             content = {
                 Icon(
                     imageVector = Icons.Outlined.Favorite,
-                    contentDescription = stringResource(id = R.string.favorite),
+                    contentDescription = stringResource(id = R.string.favorites),
                     tint = favoriteIndicatorColor
                 )
             }

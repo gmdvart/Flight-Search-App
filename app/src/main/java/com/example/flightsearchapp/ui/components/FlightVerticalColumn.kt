@@ -81,7 +81,7 @@ fun FavoriteVerticalColumn(
                     content = {
                         Icon(
                             imageVector = Icons.Outlined.Favorite,
-                            contentDescription = stringResource(id = R.string.favorite),
+                            contentDescription = stringResource(id = R.string.favorites),
                             tint = if (selectedItemsState[favorite.id] == true)
                                 Color.Red else Color.Gray
                         )

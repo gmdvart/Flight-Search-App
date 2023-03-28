@@ -2,6 +2,8 @@ package com.example.flightsearchapp.ui.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,6 +38,11 @@ fun FlightHomeScreen(
                 searchViewModel.isUserSearching(isSearching = true)
             }
         )
+        FlightHeader(
+            text = if (searchViewModel.searchUiState.isSearching)
+                stringResource(id = R.string.results) else stringResource(id = R.string.favorites)
+        )
+        Divider(modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
         ResultScreen(
             searchViewModel = searchViewModel,
             onAirportResultClick = {
@@ -113,7 +120,7 @@ fun ResultsNotFound(modifier: Modifier = Modifier) {
 fun LoadingScreen(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize()) {
         Text(
-            text = "Loading...",
+            text = stringResource(id = R.string.loading),
             modifier = Modifier.align(Alignment.Center)
         )
     }
