@@ -10,6 +10,7 @@ import com.example.flightsearchapp.data.database.Favorite
 import com.example.flightsearchapp.data.database.createFavoriteIdWith
 import com.example.flightsearchapp.data.database.toFavoriteItem
 import com.example.flightsearchapp.data.repository.FlightRepository
+import com.example.flightsearchapp.data.repository.UserPreferenceRepository
 import com.example.flightsearchapp.utlis.generatePairsToElement
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -17,7 +18,8 @@ import java.io.IOException
 import java.lang.Exception
 
 class SearchViewModel(
-    private val flightRepository: FlightRepository
+    private val flightRepository: FlightRepository,
+    private val userPreferenceRepository: UserPreferenceRepository
 ) : ViewModel() {
     var searchUiState by mutableStateOf(SearchUiState())
         private set
@@ -27,16 +29,19 @@ class SearchViewModel(
     }
 
     fun performSearch(searchText: String) {
-        searchUiState = searchUiState.copy(searchText = searchText, resultsBySelected = listOf(), isBusy = true)
+        searchUiState = searchUiState.copy(
+            searchText = searchText,
+            resultsBySelected = listOf(),
+            isBusy = true
+        )
+        viewModelScope.launch {
+            userPreferenceRepository.saveSearchStringPreference(searchText)
 
-        if (!searchUiState.isSearchStringEmpty()) {
-            // Performing search
-            viewModelScope.launch {
-                val results = flightRepository.getAirportsByIataOrName(searchText).first()
-                searchUiState = searchUiState.copy(results = results, isBusy = false)
-            }
-        } else {
-            searchUiState = searchUiState.copy(results = listOf(), isBusy = false)
+            searchUiState = searchUiState.copy(
+                results = if (!searchUiState.isSearchStringEmpty())
+                flightRepository.getAirportsByIataOrName(searchText).first() else listOf(),
+                isBusy = false
+            )
         }
     }
 
@@ -66,11 +71,13 @@ class SearchViewModel(
         refreshFavorites()
     }
 
-    private fun refreshFavorites(isBusy: Boolean = false) {
+    private fun refreshFavorites(isBusy: Boolean = false, isOnLaunch: Boolean = false) {
         viewModelScope.launch {
             if (isBusy) searchUiState = searchUiState.copy(isBusy = true)
+            val searchText = if (isOnLaunch) userPreferenceRepository.searchStringValue.first() else searchUiState.searchText
             try {
                 searchUiState = searchUiState.copy(
+                    searchText = searchText,
                     favorites = flightRepository.getAllFavorites()
                         .filterNotNull()
                         .first()
@@ -103,6 +110,6 @@ class SearchViewModel(
     }
 
     init {
-        refreshFavorites(isBusy = true)
+        refreshFavorites(isBusy = true, isOnLaunch = true)
     }
 }
