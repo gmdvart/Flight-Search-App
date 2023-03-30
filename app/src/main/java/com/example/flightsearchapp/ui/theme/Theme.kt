@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 private val LightColors = lightColorScheme(
@@ -77,6 +78,17 @@ fun FlightSearchAppTheme(
   useDarkTheme: Boolean = isSystemInDarkTheme(),
   content: @Composable() () -> Unit
 ) {
+    val systemUiController = rememberSystemUiController()
+    if (useDarkTheme) {
+        systemUiController.setSystemBarsColor(
+            color = md_theme_dark_surfaceVariant
+        )
+    } else {
+        systemUiController.setSystemBarsColor(
+            color = md_theme_light_surfaceVariant
+        )
+    }
+
   val colors = if (!useDarkTheme) {
     LightColors
   } else {
