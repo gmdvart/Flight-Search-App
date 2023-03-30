@@ -3,8 +3,8 @@ package com.example.flightsearchapp.ui.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun FlightHeader(
+fun FlightMainHeader(
     modifier: Modifier = Modifier,
     text: String = "Header"
 ) {
@@ -22,7 +22,8 @@ fun FlightHeader(
             .padding(8.dp)
             .fillMaxWidth()
             .wrapContentWidth(align = Alignment.Start),
-        style = MaterialTheme.typography.h6,
+        style = MaterialTheme.typography.headlineSmall,
+        color = MaterialTheme.colorScheme.onBackground
     )
 }
 
@@ -34,7 +35,7 @@ fun FlightAirportIataHeader(
     Text(
         text = airportIata,
         modifier = modifier,
-        style = MaterialTheme.typography.body2
+        style = MaterialTheme.typography.bodyMedium
     )
 }
 
@@ -46,7 +47,7 @@ fun FlightAirportNameHeader(
     Text(
         text = airportFullName,
         modifier = modifier,
-        style = MaterialTheme.typography.caption
+        style = MaterialTheme.typography.bodySmall
     )
 }
 
@@ -58,7 +59,7 @@ fun FlightInfoHeader(
     Text(
         text = info,
         modifier = modifier,
-        style = MaterialTheme.typography.body2,
+        style = MaterialTheme.typography.bodyLarge,
         fontWeight = FontWeight.Bold
     )
 }

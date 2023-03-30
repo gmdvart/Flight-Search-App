@@ -1,10 +1,10 @@
 package com.example.flightsearchapp.ui.components
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,9 +13,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.flightsearchapp.ui.theme.FlightSearchAppTheme
 import com.example.flightsearchapp.R
 import com.example.flightsearchapp.data.database.Airport
-import com.example.flightsearchapp.ui.theme.FlightSearchAppTheme
 import com.example.flightsearchapp.ui.viewModels.*
 import kotlinx.coroutines.launch
 
@@ -27,7 +27,9 @@ fun FlightHomeScreen(
     val focusManager = LocalFocusManager.current
 
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         FlightSearchTextField(
@@ -38,7 +40,7 @@ fun FlightHomeScreen(
                 searchViewModel.isUserSearching(isSearching = true)
             }
         )
-        FlightHeader(
+        FlightMainHeader(
             text = if (searchViewModel.searchUiState.isSearching)
                 stringResource(id = R.string.results) else stringResource(id = R.string.favorites)
         )
@@ -70,16 +72,18 @@ fun ResultScreen(
     val searchUiState = searchViewModel.searchUiState
 
     val selectedItems: MutableMap<Int, Boolean> = remember {
-        searchUiState.favorites.associate { it.id to it.markedAsFavorite }.toMutableMap()
+        searchUiState.favorites.associate {
+            it.id to it.markedAsFavorite
+        }.toMutableMap()
     }
 
     if (searchUiState.isBusy) {
-        LoadingScreen()
+        FlightStatusScreen(statusText = stringResource(id = R.string.loading))
     }
+
     if (searchUiState.isSearching) {
         if (searchUiState.isResultSelected()) {
-            FavoriteVerticalColumn(
-                modifier = Modifier.padding(4.dp),
+            FlightFavoriteVerticalColumn(
                 favoriteItems = searchUiState.resultsBySelected,
                 onItemClick = {
                     coroutineScope.launch { searchViewModel.markFlightAsFavorite(it) }
@@ -88,12 +92,11 @@ fun ResultScreen(
             )
         } else if (!searchUiState.isResultsNotFound()) {
             FlightVerticalColumn(
-                modifier = Modifier.padding(4.dp),
                 airports = searchUiState.results,
                 onItemClick = onAirportResultClick
             )
         } else {
-            ResultsNotFound(modifier = Modifier.padding(4.dp))
+            FlightStatusScreen(statusText = stringResource(id = R.string.found_nothing))
         }
     } else {
         FavoritesScreen(
@@ -107,46 +110,20 @@ fun ResultScreen(
 }
 
 @Composable
-fun ResultsNotFound(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxSize()) {
-        Text(
-            text = stringResource(id = R.string.found_nothing),
-            modifier = Modifier.align(Alignment.Center)
-        )
-    }
-}
-
-@Composable
-fun LoadingScreen(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxSize()) {
-        Text(
-            text = stringResource(id = R.string.loading),
-            modifier = Modifier.align(Alignment.Center)
-        )
-    }
-}
-
-@Composable
 fun FavoritesScreen(
-    modifier: Modifier = Modifier,
     favoriteItems: List<FavoriteItem>,
     onItemCLick: (FavoriteItem) -> Unit,
     selectedItemsState: MutableMap<Int, Boolean>
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
         if (favoriteItems.isEmpty()) {
-            Text(
-                text = stringResource(id = R.string.favourites_are_empty),
-                modifier = Modifier.align(Alignment.Center)
-            )
+            FlightStatusScreen(statusText = stringResource(id = R.string.favourites_are_empty))
         } else {
-            FavoriteVerticalColumn(
+            FlightFavoriteVerticalColumn(
                 favoriteItems = favoriteItems,
                 onItemClick = onItemCLick,
                 selectedItemsState = selectedItemsState
             )
         }
-    }
 }
 
 @Preview(showBackground = true)
@@ -156,4 +133,3 @@ fun FlightHomeScreenPreview() {
         FlightHomeScreen()
     }
 }
-
