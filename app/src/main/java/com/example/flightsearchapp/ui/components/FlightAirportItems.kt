@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.example.flightsearchapp.R
 import com.example.flightsearchapp.data.database.Airport
 import com.example.flightsearchapp.ui.theme.FlightSearchAppTheme
-import com.example.flightsearchapp.ui.viewModels.FavoriteItem
+import com.example.flightsearchapp.ui.viewModel.FavoriteItem
 
 @Composable
 fun FlightAirportItem(

@@ -3,7 +3,7 @@ package com.example.flightsearchapp.data.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.flightsearchapp.ui.viewModels.FavoriteItem
+import com.example.flightsearchapp.ui.viewModel.FavoriteItem
 
 @Entity(tableName = "favorite")
 data class Favorite(

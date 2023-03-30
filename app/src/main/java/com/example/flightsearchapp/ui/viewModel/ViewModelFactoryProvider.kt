@@ -1,6 +1,5 @@
-package com.example.flightsearchapp.ui.viewModels
+package com.example.flightsearchapp.ui.viewModel
 
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer

@@ -81,11 +81,11 @@ fun FlightSearchAppTheme(
     val systemUiController = rememberSystemUiController()
     if (useDarkTheme) {
         systemUiController.setSystemBarsColor(
-            color = md_theme_dark_surfaceVariant
+            color = md_theme_dark_background
         )
     } else {
         systemUiController.setSystemBarsColor(
-            color = md_theme_light_surfaceVariant
+            color = md_theme_light_background
         )
     }
 

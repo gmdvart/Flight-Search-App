@@ -1,5 +1,6 @@
 package com.example.flightsearchapp.ui.components
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,7 +17,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.flightsearchapp.ui.theme.FlightSearchAppTheme
 import com.example.flightsearchapp.R
 import com.example.flightsearchapp.data.database.Airport
-import com.example.flightsearchapp.ui.viewModels.*
+import com.example.flightsearchapp.ui.viewModel.*
 import kotlinx.coroutines.launch
 
 @Composable
@@ -71,14 +72,15 @@ fun ResultScreen(
     val coroutineScope = rememberCoroutineScope()
     val searchUiState = searchViewModel.searchUiState
 
+    if (searchUiState.isBusy) {
+        FlightStatusScreen(statusText = stringResource(id = R.string.loading))
+        return
+    }
+
     val selectedItems: MutableMap<Int, Boolean> = remember {
         searchUiState.favorites.associate {
             it.id to it.markedAsFavorite
         }.toMutableMap()
-    }
-
-    if (searchUiState.isBusy) {
-        FlightStatusScreen(statusText = stringResource(id = R.string.loading))
     }
 
     if (searchUiState.isSearching) {

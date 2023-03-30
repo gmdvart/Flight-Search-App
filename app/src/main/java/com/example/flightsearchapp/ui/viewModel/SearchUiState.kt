@@ -1,4 +1,4 @@
-package com.example.flightsearchapp.ui.viewModels
+package com.example.flightsearchapp.ui.viewModel
 
 import com.example.flightsearchapp.data.database.Airport
 import com.example.flightsearchapp.data.database.Favorite
@@ -9,7 +9,6 @@ data class SearchUiState(
     val results: List<Airport> = listOf(),
     val resultsBySelected: List<FavoriteItem> = listOf(),
     val favorites: List<FavoriteItem> = listOf(),
-    val favoritesId: List<Int> = listOf(),
     val isBusy: Boolean = false
 )
 

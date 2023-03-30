@@ -1,4 +1,4 @@
-package com.example.flightsearchapp.ui.viewModels
+package com.example.flightsearchapp.ui.viewModel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
